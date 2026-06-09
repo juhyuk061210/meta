@@ -1,0 +1,685 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>메타광고 마스터클래스</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Noto+Sans+KR:wght@400;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #171714;
+      --cream: #fbf3db;
+      --cream-dark: #f6ecc8;
+      --wine: #a9164c;
+      --pink: #ef3d88;
+      --line: #151512;
+      --muted: #848178;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: #fff;
+      color: var(--ink);
+      font-family: "Noto Sans KR", system-ui, sans-serif;
+      letter-spacing: 0;
+    }
+
+    button, input { font: inherit; }
+
+    .phone {
+      width: min(100%, 650px);
+      min-height: 100vh;
+      margin: 0 auto;
+      background: var(--cream);
+      border-left: 5px solid #fff;
+      border-right: 5px solid #fff;
+    }
+
+    .brand {
+      height: 56px;
+      display: grid;
+      place-items: center;
+      background: var(--wine);
+      color: var(--cream);
+      border-top: 3px solid var(--line);
+      border-bottom: 3px solid var(--line);
+      font-weight: 900;
+      font-size: 15px;
+      text-shadow: 1px 1px 0 rgba(0, 0, 0, .25);
+    }
+
+    .tabs {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      border-bottom: 4px solid var(--line);
+      background: var(--cream);
+    }
+
+    .tab {
+      height: 70px;
+      border: 0;
+      border-right: 1px solid var(--line);
+      background: transparent;
+      color: #8b887e;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      line-height: 1;
+    }
+
+    .tab:last-child { border-right: 0; }
+    .tab.is-active { background: var(--wine); color: #fff7dc; }
+
+    .tab-num {
+      font-family: "Black Han Sans", Impact, sans-serif;
+      font-size: 23px;
+      line-height: .85;
+    }
+
+    .tab-day {
+      margin-top: 7px;
+      font-size: 9px;
+      font-weight: 900;
+    }
+
+    .tab-lock {
+      margin-top: 4px;
+      color: #e34879;
+      font-size: 8px;
+      font-weight: 900;
+    }
+
+    .tab.is-active .tab-lock { color: #ff7a9d; }
+
+    .page {
+      display: none;
+      padding: 34px 25px 54px;
+    }
+
+    .page.is-active { display: block; }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 30px;
+      padding: 7px 15px 8px;
+      background: var(--wine);
+      color: #fff;
+      border: 2px solid var(--line);
+      border-radius: 999px;
+      box-shadow: 2px 3px 0 var(--line);
+      font-size: 11px;
+      font-weight: 900;
+    }
+
+    .eyebrow {
+      margin: 27px 0 14px;
+      color: var(--wine);
+      font-size: 13px;
+      font-weight: 900;
+      letter-spacing: 6px;
+    }
+
+    .headline {
+      margin: 0;
+      font-family: "Black Han Sans", Impact, sans-serif;
+      font-size: clamp(47px, 8vw, 58px);
+      line-height: 1.02;
+      font-weight: 400;
+      letter-spacing: 0;
+    }
+
+    .headline .pink { color: var(--pink); }
+
+    .headline .mark {
+      color: var(--pink);
+      text-shadow: 0 18px 0 rgba(239, 61, 136, .22);
+    }
+
+    .subcopy {
+      margin: 20px 0 32px;
+      font-size: 15px;
+      line-height: 1.75;
+      color: #2a2822;
+    }
+
+    .browser-video {
+      margin: 10px -25px 0;
+      border-top: 4px solid var(--line);
+      border-bottom: 4px solid var(--line);
+      background: #191919;
+    }
+
+    .chrome-bar {
+      height: 23px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 9px;
+      background: #303236;
+      color: #d9d9d9;
+      font-size: 8px;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #4a4d52;
+      flex: 0 0 auto;
+    }
+
+    .slide-wrap {
+      position: relative;
+      display: grid;
+      grid-template-columns: 38px 1fr;
+      min-height: 336px;
+      background: #080808;
+    }
+
+    .slides {
+      padding: 9px 5px;
+      display: flex;
+      flex-direction: column;
+      gap: 11px;
+      background: #151515;
+    }
+
+    .thumb {
+      height: 34px;
+      border: 1px solid #595959;
+      background: var(--cream-dark);
+    }
+
+    .thumb:nth-child(1), .thumb:nth-child(3) { background: var(--wine); }
+
+    .slide {
+      position: relative;
+      padding: 78px 38px 55px;
+      background: #f6f0c8;
+      overflow: hidden;
+    }
+
+    .slide-small {
+      margin-bottom: 12px;
+      color: var(--wine);
+      font-size: 10px;
+      font-weight: 900;
+      letter-spacing: 2px;
+    }
+
+    .slide h2 {
+      margin: 0 0 26px;
+      font-family: "Black Han Sans", Impact, sans-serif;
+      font-size: 34px;
+      line-height: 1.08;
+      font-weight: 400;
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 20px;
+      align-items: center;
+      max-width: 480px;
+    }
+
+    .box {
+      min-height: 61px;
+      display: grid;
+      place-items: center;
+      border: 2px solid #232323;
+      border-radius: 4px;
+      background: #fff9df;
+      text-align: center;
+      font-weight: 900;
+      font-size: 10px;
+    }
+
+    .box strong {
+      display: block;
+      margin-top: 4px;
+      font-size: 14px;
+    }
+
+    .box.hot { background: var(--wine); color: #fff; }
+    .arrow { position: relative; }
+
+    .arrow::after {
+      content: "→";
+      position: absolute;
+      right: -18px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 22px;
+      font-weight: 900;
+    }
+
+    .slide-foot {
+      margin-top: 21px;
+      font-size: 11px;
+      font-weight: 900;
+    }
+
+    .teacher {
+      position: absolute;
+      right: 22px;
+      bottom: 0;
+      width: 105px;
+      height: 72px;
+      background: radial-gradient(circle at 50% 24%, #d8cab7 0 12px, #191513 13px 25px, #050505 26px 100%);
+      border: 3px solid #121212;
+    }
+
+    .caption {
+      position: absolute;
+      left: 50%;
+      bottom: 7px;
+      transform: translateX(-50%);
+      padding: 3px 10px;
+      border-radius: 10px;
+      background: #050505;
+      color: #fff;
+      font-weight: 900;
+      font-size: 15px;
+      text-shadow: 1px 1px 0 #000;
+      white-space: nowrap;
+    }
+
+    .play {
+      position: absolute;
+      left: 50%;
+      top: 42%;
+      width: 76px;
+      height: 76px;
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      border: 4px solid #fff3d6;
+      background: var(--wine);
+      display: grid;
+      place-items: center;
+      box-shadow: 0 0 26px rgba(0, 0, 0, .45);
+    }
+
+    .play::before {
+      content: "";
+      width: 0;
+      height: 0;
+      border-top: 11px solid transparent;
+      border-bottom: 11px solid transparent;
+      border-left: 16px solid #fff;
+      margin-left: 5px;
+    }
+
+    .lead-form {
+      margin: 0 -25px -54px;
+      padding: 39px 30px 45px;
+      background: var(--wine);
+      color: #fff8df;
+      border-top: 4px solid var(--line);
+    }
+
+    .form-kicker {
+      font-size: 12px;
+      font-weight: 900;
+      margin-bottom: 13px;
+    }
+
+    .form-title {
+      margin: 0 0 14px;
+      font-family: "Black Han Sans", Impact, sans-serif;
+      font-size: clamp(35px, 7vw, 43px);
+      line-height: 1.12;
+      font-weight: 400;
+    }
+
+    .form-desc {
+      margin: 0 0 28px;
+      line-height: 1.75;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    label {
+      display: block;
+      margin: 0 0 8px;
+      font-size: 10px;
+      font-weight: 900;
+    }
+
+    .input {
+      width: 100%;
+      height: 56px;
+      margin-bottom: 18px;
+      padding: 0 18px;
+      border: 3px solid var(--line);
+      border-radius: 5px;
+      background: #fff9e9;
+      box-shadow: 4px 5px 0 #050505;
+      color: #857f70;
+      font-size: 18px;
+      outline: none;
+    }
+
+    .result-card {
+      margin-top: 2px;
+      padding: 26px 16px 23px;
+      border: 3px solid var(--line);
+      border-radius: 8px;
+      background: #fff9e9;
+      box-shadow: 4px 5px 0 #050505;
+      color: var(--ink);
+      text-align: center;
+    }
+
+    .result-card h3 {
+      margin: 0 0 18px;
+      color: var(--wine);
+      font-family: "Black Han Sans", Impact, sans-serif;
+      font-size: 24px;
+      font-weight: 400;
+    }
+
+    .result-card p {
+      margin: 0;
+      line-height: 1.7;
+      font-size: 13px;
+    }
+
+    .primary {
+      margin-top: 18px;
+      min-width: 180px;
+      min-height: 43px;
+      border: 3px solid var(--line);
+      border-radius: 5px;
+      background: var(--wine);
+      color: #fff;
+      box-shadow: 2px 3px 0 #050505;
+      font-size: 14px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .day-page { padding-top: 34px; }
+
+    .day-page .headline {
+      margin-top: 20px;
+      font-size: clamp(45px, 8vw, 58px);
+    }
+
+    .video-embed {
+      height: 363px;
+      margin-top: 26px;
+      border: 0;
+      background: #282828;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      position: relative;
+    }
+
+    .video-error {
+      display: grid;
+      grid-template-columns: 58px 1fr;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .bang {
+      width: 54px;
+      height: 54px;
+      border: 6px solid #bdbdbd;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      color: #bdbdbd;
+      font-size: 38px;
+      font-weight: 900;
+    }
+
+    .video-error strong {
+      display: block;
+      text-decoration: underline;
+      font-size: 22px;
+      line-height: 1.45;
+    }
+
+    .video-error span {
+      display: block;
+      font-size: 20px;
+      line-height: 1.45;
+      font-weight: 700;
+    }
+
+    .yt {
+      position: absolute;
+      right: 12px;
+      bottom: 18px;
+      width: 40px;
+      height: 29px;
+      border-radius: 8px;
+      background: #d7d7d7;
+      display: grid;
+      place-items: center;
+    }
+
+    .yt::before {
+      content: "";
+      border-top: 7px solid transparent;
+      border-bottom: 7px solid transparent;
+      border-left: 11px solid #2b2b2b;
+      margin-left: 3px;
+    }
+
+    .placeholder-video {
+      height: 330px;
+      margin: 25px -15px 0;
+      border: 2px solid var(--line);
+      background: var(--cream-dark);
+      display: grid;
+      place-items: center;
+      color: #948a71;
+      font-size: 14px;
+    }
+
+    .locked {
+      min-height: 640px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding-top: 62px;
+      text-align: center;
+    }
+
+    .star {
+      margin: 0 auto 18px;
+      width: 56px;
+      height: 56px;
+      clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 56%, 79% 91%, 50% 69%, 21% 91%, 32% 56%, 2% 35%, 39% 35%);
+      background: #ffe267;
+      filter: drop-shadow(2px 2px 0 var(--line));
+    }
+
+    .locked .badge {
+      background: var(--pink);
+      box-shadow: none;
+      min-width: 98px;
+    }
+
+    .locked h1 {
+      margin: 24px 0 23px;
+      font-family: "Black Han Sans", Impact, sans-serif;
+      font-size: clamp(45px, 8vw, 58px);
+      line-height: 1.08;
+      font-weight: 400;
+    }
+
+    .locked p {
+      margin: 0;
+      line-height: 1.75;
+      font-size: 13px;
+    }
+
+    .outline {
+      margin-top: 35px;
+      min-width: 154px;
+      height: 46px;
+      border: 3px solid var(--line);
+      border-radius: 5px;
+      background: #fff9e9;
+      box-shadow: 2px 3px 0 #050505;
+      color: var(--ink);
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    @media (max-width: 430px) {
+      .page { padding-left: 24px; padding-right: 24px; }
+      .headline, .day-page .headline, .locked h1 { font-size: 41px; }
+      .slide { padding-left: 22px; padding-right: 22px; }
+      .flow { grid-template-columns: 1fr; gap: 8px; width: 142px; }
+      .arrow::after {
+        content: "↓";
+        right: 50%;
+        top: auto;
+        bottom: -18px;
+        transform: translateX(50%);
+      }
+      .teacher { width: 88px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="phone">
+    <header class="brand">메타광고 마스터클래스</header>
+    <nav class="tabs" aria-label="강의 일차">
+      <button class="tab is-active" type="button" data-day="1"><span class="tab-num">1</span><span class="tab-day">일차</span></button>
+      <button class="tab" type="button" data-day="2"><span class="tab-num">2</span><span class="tab-day">일차</span></button>
+      <button class="tab" type="button" data-day="3"><span class="tab-num">3</span><span class="tab-day">일차</span></button>
+      <button class="tab" type="button" data-day="4"><span class="tab-num">4</span><span class="tab-day">일차</span><span class="tab-lock">새벽공개</span></button>
+      <button class="tab" type="button" data-day="5"><span class="tab-num">5</span><span class="tab-day">일차</span><span class="tab-lock">새벽공개</span></button>
+    </nav>
+
+    <section class="page is-active" data-page="1">
+      <span class="badge">무료 공개 · 1일차</span>
+      <div class="eyebrow">지금 바로 확인하세요</div>
+      <h1 class="headline">일 매출 <span class="pink">500</span>을 만드는<br>메타광고 사이클</h1>
+      <p class="subcopy">광고비 낭비 없이, 검증된 사이클만으로<br>매출을 직접 올리는 방법을 공개합니다.</p>
+
+      <div class="browser-video" aria-label="1일차 영상 미리보기">
+        <div class="chrome-bar"><span class="dot"></span><span>1e76f2db-ad9f-4573-a293-a08c1d6fdd5.claudusercontent.com/design/projects/...</span></div>
+        <div class="slide-wrap">
+          <aside class="slides" aria-hidden="true">
+            <div class="thumb"></div>
+            <div class="thumb"></div>
+            <div class="thumb"></div>
+            <div class="thumb"></div>
+          </aside>
+          <div class="slide">
+            <div class="slide-small">쿠팡 컨설트 — 실제로 겪은 일</div>
+            <h2>송장번호 하나에,<br>500만원이 통째로 날아갑니다.</h2>
+            <div class="flow">
+              <div class="box arrow">제조<br><strong>500만 원</strong></div>
+              <div class="box arrow">마케팅<br><strong>100만 원</strong></div>
+              <div class="box arrow">송장번호<br><strong>입력 실수</strong></div>
+              <div class="box hot arrow">판매정지<br><strong>500만원</strong></div>
+              <div class="box">그 사이<br><strong>경쟁사 추월</strong></div>
+            </div>
+            <p class="slide-foot">이런 일이 비일비재합니다. 잘못 하나 없어도, 한순간에 뒤집힙니다.</p>
+            <div class="teacher"></div>
+            <div class="caption">제가 500만원 주고</div>
+            <div class="play" aria-hidden="true"></div>
+          </div>
+        </div>
+      </div>
+
+      <form class="lead-form">
+        <div class="form-kicker">다음 강의 무료 수강</div>
+        <h2 class="form-title">2일차 영상을 받으시려면<br>정보를 남겨주세요</h2>
+        <p class="form-desc">이름과 전화번호를 남기시면<br>2일차 · 3일차 강의가 즉시 공개됩니다.</p>
+
+        <label for="name">이름</label>
+        <input class="input" id="name" name="name" placeholder="홍길동" autocomplete="name">
+        <label for="phone">전화번호</label>
+        <input class="input" id="phone" name="phone" placeholder="010-0000-0000" autocomplete="tel">
+
+        <div class="result-card">
+          <h3>강의가 공개됐습니다!</h3>
+          <p>상단 탭을 눌러<br>2일차 · 3일차 강의를 바로 시청하세요.</p>
+          <button class="primary" type="button" data-day="2">2일차 강의 보러 가기 →</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="page day-page" data-page="2">
+      <span class="badge">2일차</span>
+      <h1 class="headline">메타광고에서<br><span class="mark">정말 먹히는 제품</span> 찾는 법</h1>
+      <p class="subcopy">광고 전에 제품 선정이 전부입니다.<br>실제로 돈이 되는 제품을 고르는 기준을 공개합니다.</p>
+      <div class="video-embed">
+        <div class="video-error">
+          <div class="bang">!</div>
+          <div>
+            <strong>YouTube에서 동영상 보기</strong>
+            <span>오류 153</span>
+            <span>동영상 플레이어 구성 오류</span>
+          </div>
+        </div>
+        <div class="yt" aria-hidden="true"></div>
+      </div>
+    </section>
+
+    <section class="page day-page" data-page="3">
+      <span class="badge">3일차</span>
+      <h1 class="headline">메타광고<br><span class="mark">픽셀 연동</span> 및 설치하는 법</h1>
+      <p class="subcopy">픽셀 없이 돌린 광고는 그냥 태우는 겁니다.<br>설치부터 검증까지 처음부터 끝까지 보여드립니다.</p>
+      <div class="placeholder-video">3일차 영상 준비 중</div>
+    </section>
+
+    <section class="page locked" data-page="4">
+      <div>
+        <div class="star"></div>
+        <span class="badge">4일차 · 곧 공개</span>
+        <h1>오늘 새벽중으로<br>공개됩니다</h1>
+        <p>조금만 기다려 주세요.<br>새벽에 바로 알림을 받으시려면<br>1일차 하단에 정보를 남겨주세요.</p>
+        <button class="outline" type="button" data-day="1">1일차 정보 남기기</button>
+      </div>
+    </section>
+
+    <section class="page locked" data-page="5">
+      <div>
+        <div class="star"></div>
+        <span class="badge">5일차 · 곧 공개</span>
+        <h1>오늘 새벽중으로<br>공개됩니다</h1>
+        <p>조금만 기다려 주세요.<br>새벽에 바로 알림을 받으시려면<br>1일차 하단에 정보를 남겨주세요.</p>
+        <button class="outline" type="button" data-day="1">1일차 정보 남기기</button>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const tabs = [...document.querySelectorAll(".tab")];
+    const pages = [...document.querySelectorAll(".page")];
+    const goToDay = (day) => {
+      tabs.forEach((tab) => tab.classList.toggle("is-active", tab.dataset.day === day));
+      pages.forEach((page) => page.classList.toggle("is-active", page.dataset.page === day));
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    };
+
+    document.addEventListener("click", (event) => {
+      const target = event.target.closest("[data-day]");
+      if (!target) return;
+      goToDay(target.dataset.day);
+    });
+  </script>
+</body>
+</html>
